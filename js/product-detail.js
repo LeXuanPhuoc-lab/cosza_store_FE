@@ -232,6 +232,10 @@ $(document).ready(function () {
     img.setAttribute("alt", "IMG");
     div.appendChild(img);
     li.appendChild(div);
+    div.addEventListener("click", function () {
+      li.remove();
+      removeCartItem(item);
+    });
 
     div = document.createElement("div");
     div.setAttribute("class", "header-cart-item-txt p-t-8");
@@ -251,6 +255,28 @@ $(document).ready(function () {
     cartList.appendChild(li);
   }
 
+  function removeCartItem(item) {
+    var index = cartItems["cartItems"].indexOf(item);
+    cartItems["cartItems"].splice(index, 1);
+    itemQuantity["quantities"].splice(index, 1);
+
+    document.querySelector(".cart-total-price").innerHTML = "";
+    
+    localStorage.setItem("cart-items", JSON.stringify(cartItems));
+    localStorage.setItem("cart-items-quantity", JSON.stringify(itemQuantity));
+  }
+  
+  function countTotalPrice(cartItems, itemQuantity) {
+    var totalPrice = 0;
+    for (let i = 0; i < cartItems["cartItems"].length; i++) {
+      totalPrice +=
+        parseInt(cartItems["cartItems"][i].price) *
+        parseInt(itemQuantity["quantities"][i]);
+    }
+    var totalPriceTag = document.querySelector(".cart-total-price");
+    totalPriceTag.innerHTML = "Total: $" + totalPrice + ".00";
+  }
+
   //load all cart items when load page
   let cartItems = JSON.parse(localStorage.getItem("cart-items"));
   let itemQuantity = JSON.parse(localStorage.getItem("cart-items-quantity"));
@@ -258,13 +284,9 @@ $(document).ready(function () {
     var totalPrice = 0;
     for (let i = 0; i < cartItems["cartItems"].length; i++) {
       createCartItem(cartItems["cartItems"][i], itemQuantity["quantities"][i]);
-      totalPrice +=
-        parseInt(cartItems["cartItems"][i].price) *
-        parseInt(itemQuantity["quantities"][i]);
     }
 
-    var totalPriceTag = document.querySelector(".cart-total-price");
-    totalPriceTag.innerHTML = "Total: $" + totalPrice + ".00";
+    countTotalPrice(cartItems, itemQuantity);
   }
 
   // shopping-cart quick-view
@@ -319,7 +341,10 @@ $(document).ready(function () {
       createCartItem(item, addQuantity);
     }
 
+    countTotalPrice(cartItems, itemQuantity);
+
     localStorage.setItem("cart-items", JSON.stringify(cartItems));
     localStorage.setItem("cart-items-quantity", JSON.stringify(itemQuantity));
+    
   });
 });
