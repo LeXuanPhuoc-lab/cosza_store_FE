@@ -1,32 +1,71 @@
-$(document).ready(async function() {
+$(document).ready(async function () {
 
-    $("#tags li").on("click", function() {
+    $("#tags li").on("click", function () {
         var linkId = $(this).find("a").attr("id");
-
+        var element = document.getElementById("blog");
+        removeAllChildren(element);
         switch (linkId) {
             case "fashionTag":
-                console.log("Action 1 clicked");
+                callAPITag(1);
                 break;
-            case "action2":
-                // Code to handle action 2
-                console.log("Action 2 clicked");
+            case "beautyTag":
+                callAPITag(2);
                 break;
-            case "action3":
-                // Code to handle action 3
-                console.log("Action 3 clicked");
+            case "streetTag":
+                callAPITag(3);
+                break;
+            case "lifeTag":
+                callAPITag(4);
+                break;
+            case "DIYTag":
+                callAPITag(5);
                 break;
             default:
-                // Default code if none of the defined actions match
                 console.log("Unknown action clicked");
                 break;
         }
     });
 
+    function removeAllChildren(parentElement) {
+        while (parentElement.firstChild) {
+            parentElement.removeChild(parentElement.firstChild);
+        }
+    }
 
+    function callAPITag(tag) {
+        fetch("http://localhost:8080/blog/tag/" + tag)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Network response was not ok");
+                }
+                return response.json();
+            })
+            .then(data => {
+                output(data);
+            })
+            .catch(error => {
+                console.error("Fetch error:", error);
+            });
+    }
 
+    function getAllBlog(page) {
+        fetch("http://localhost:8080/blog/?page=" + page)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Network response was not ok");
+                }
+                return response.json();
+            })
+            .then(data => {
+                output(data);
+            })
+            .catch(error => {
+                console.error("Fetch error:", error);
+            });
+    }
 
     function output(data) {
-            
+
         data.content.forEach(element => {
             var resultHTML = ""
             var date = new Date(element.createDate);
@@ -66,7 +105,7 @@ $(document).ready(async function() {
                             ${element.comments.length} comments
                         </span>
                     </span>
-                    <a href="blog-detail.html" class="stext-101 cl2 hov-cl1 trans-04 m-tb-10">
+                    <a href="blog-detail.html?blogId=${element.id}" class="stext-101 cl2 hov-cl1 trans-04 m-tb-10">
                         Continue Reading
                         <i class="fa fa-long-arrow-right m-l-9"></i>
                     </a>
@@ -74,44 +113,50 @@ $(document).ready(async function() {
             </div>
         </div>`;
 
-        var $result = $(resultHTML);
-        var spanElements = $result.find("#tag");
-        $(document).ready(function() {
-            // Loop through the array and create a <div> for each item
-            $.each(element.tagBlogs, function(index, item) {
+            var $result = $(resultHTML);
+            var spanElements = $result.find("#tag");
+            $(document).ready(function () {
+                // Loop through the array and create a <div> for each item
+                $.each(element.tagBlogs, function (index, item) {
 
-                if (index == 0) {
-                    spanElements.append(" " + item.tag.name);
-                } else {
-                    spanElements.append(", " + item.tag.name);
+                    if (index == 0) {
+                        spanElements.append(" " + item.tag.name);
+                    } else {
+                        spanElements.append(", " + item.tag.name);
+                    }
+                    if (index < element.tagBlogs.length - 1) {
+
+                    }
                 }
-                if (index < element.tagBlogs.length - 1) {
-                    
-                }
-            }
-            );
-            spanElements.append(' <span class="cl12 m-l-4 m-r-6">|</span>');
-          });
-        $('#blog').append($result);
+                );
+                spanElements.append(' <span class="cl12 m-l-4 m-r-6">|</span>');
+            });
+            $('#blog').append($result);
         }
         );
-        // var parentDiv = document.getElementById("blog");
+        var pagination = `<div class="flex-l-m flex-w w-full p-t-10 m-lr--7" id="pagination"/>`;
+        var $pagination = $(pagination);
+        for (var i = 1; i <= data.numberOfPages; i++) {
+            if (i === data.currentPage + 1) {
+                $pagination.append(`<a href="#" class="flex-c-m how-pagination1 trans-04 m-all-7 active-pagination1" id=page` + i + `>
+                `+ i + `
+                </a>`)
+            } else {
+                $pagination.append(`<a href="#" class="flex-c-m how-pagination1 trans-04 m-all-7" id=page` + i + `>` + i + `</a>`)
+            }
+        }
 
-        // parentDiv.innerHTML = resultHTML;
-        
+        $pagination.on("click", "a", function (event) {
+            event.preventDefault();
+            var numericPart = parseInt($(this).attr("id").slice(4), 10) - 1;
+            var element = document.getElementById("blog");
+            removeAllChildren(element);
+            getAllBlog(numericPart);
+            window.scrollTo({ top: 0, behavior: "smooth" });
+        });
+
+        $('#blog').append($pagination);
     }
 
-
-    // Using jQuery's AJAX method
-    await $.ajax({
-        url: "http://localhost:8080/blog/",
-        method: "GET",
-        dataType: "json",
-        success: function(data) {
-            output(data);
-        },
-        error: function(xhr, status, error) {
-            console.error("Error fetching blog content:", error);
-        }
-    });
+    getAllBlog(0);
 });
