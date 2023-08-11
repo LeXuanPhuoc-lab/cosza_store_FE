@@ -58,6 +58,7 @@ $(document).ready(async function () {
             })
             .then(data => {
                 output(data);
+               
             })
             .catch(error => {
                 console.error("Fetch error:", error);
@@ -69,7 +70,11 @@ $(document).ready(async function () {
         data.content.forEach(element => {
             var resultHTML = ""
             var date = new Date(element.createDate);
-            var month = date.getMonth() + 1;
+            var monthNames = [
+                "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                "Jul", "Aug", "Sep", "Oct", "Novr", "Dec"
+            ];
+            var month = monthNames[date.getMonth() + 1];
             var day = date.getDay() - 1;
             var year = date.getFullYear();
             resultHTML += `<div class="p-b-63">
@@ -102,7 +107,7 @@ $(document).ready(async function () {
                         <span id = "tag">
                         </span>
                         <span>
-                            ${element.comments.length} comments
+                             ${element.comments.length} comments
                         </span>
                     </span>
                     <a href="blog-detail.html?blogId=${element.id}" class="stext-101 cl2 hov-cl1 trans-04 m-tb-10">
