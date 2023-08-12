@@ -1,25 +1,26 @@
-$(document).ready(function() {
-    $("#btn-sign-in").click(function() {
+$(document).ready(function () {
+    $("#btn-sign-in").click(function () {
         var username = $("#user").val();
         var password = $("#pass").val();
+        localStorage.setItem("email", username);
 
         $.ajax({
-                url: "http://localhost:8080/signin",
-                method: "POST",
-                data: {
-                    email: username,
-                    password: password,
+            url: "http://localhost:8080/signin",
+            method: "POST",
+            data: {
+                email: username,
+                password: password,
+            },
+            timeout: 60000,
+            statusCode: {
+                403: function () {
+                    alert("Sai tai khoan");
                 },
-                timeout: 60000,
-                statusCode: {
-                    403: function() {
-                        alert("Sai tai khoan");
-                    },
-                },
+            },
 
-            })
+        })
             // khi goi API thi ket qua se tra o day
-            .done(function(response) {
+            .done(function (response) {
                 var token = response.data;
                 if (token != null && token != "") {
                     // luu token vao bo nho cua browser
@@ -33,7 +34,7 @@ $(document).ready(function() {
 
 
 
-    $("#btn-sign-up").click(function(event) {
+    $("#btn-sign-up").click(function (event) {
         event.preventDefault(); // Ngăn chặn hành vi mặc định
         Add();
     });
@@ -60,15 +61,19 @@ $(document).ready(function() {
                 password: password,
                 email: email
             },
-            success: function(result) {
+            success: function (result) {
                 console.log('befor pare', result)
 
                 if (result.statusCode === 200) {
+                    $("#password-new-error").addClass("hidden");
+                    $("#user-new-error").addClass("hidden");
+                    $("#email-new-error").addClass("hidden");
+
                     alert('dang ky thanh cong')
                     window.location.href = "login.html"
                 }
             },
-            error: function(errormessage) {
+            error: function (errormessage) {
 
                 try {
                     const errorData = JSON.parse(errormessage.responseText);
@@ -111,4 +116,40 @@ $(document).ready(function() {
         });
     }
 
+
+    getUserInfo();
+
+
 });
+
+
+
+function getUserInfo() {
+    let email = localStorage.getItem("email")
+    $.ajax({
+        url: "http://localhost:8080/account",
+        method: "GET",
+        headers: {
+            "Authorization": "Bearer " + localStorage.getItem("token")
+        },
+        data: {
+            email: email
+        },
+        success: function (result) {
+            console.log(result.data)
+            if (result.statusCode === 200) {
+                var user = result.data;
+                $("#username").val(user.userName);
+                $("#name").val(user.id);
+                $("#email").val(user.email);
+            } else {
+                // Xử lý khi không tìm thấy người dùng
+                alert("User not found");
+            }
+        },
+        error: function (xhr, status, error) {
+            // Xử lý khi có lỗi trong quá trình gọi API
+            console.log("Error:", error);
+        }
+    });
+}
