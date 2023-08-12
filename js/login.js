@@ -1,31 +1,32 @@
-$(document).ready(function () {
-    $("#btn-sign-in").click(function () {
+$(document).ready(function() {
+    $("#btn-sign-in").click(function() {
         var username = $("#user").val();
         var password = $("#pass").val();
         localStorage.setItem("email", username);
 
         $.ajax({
-            url: "http://localhost:8080/signin",
-            method: "POST",
-            data: {
-                email: username,
-                password: password,
-            },
-            timeout: 60000,
-            statusCode: {
-                403: function () {
-                    alert("Sai tai khoan");
+                url: "http://localhost:8080/signin",
+                method: "POST",
+                data: {
+                    email: username,
+                    password: password,
                 },
-            },
+                timeout: 60000,
+                statusCode: {
+                    403: function() {
+                        alert("Sai tai khoan");
+                    },
+                },
 
-        })
+            })
             // khi goi API thi ket qua se tra o day
-            .done(function (response) {
-                var token = response.data;
-                if (token != null && token != "") {
+            .done(function(response) {
+                var respObj = response.data;
+                if (respObj != null && respObj != "") {
                     // luu token vao bo nho cua browser
                     // "gioHang": [{id:1, title:"Shirt", price:109,soluong:10}]
-                    localStorage.setItem("token", token);
+                    localStorage.setItem("token", respObj.token);
+                    localStorage.setItem("user_id", respObj.user_id);
                     window.location.href = "index.html";
                 }
             });
@@ -34,7 +35,7 @@ $(document).ready(function () {
 
 
 
-    $("#btn-sign-up").click(function (event) {
+    $("#btn-sign-up").click(function(event) {
         event.preventDefault(); // Ngăn chặn hành vi mặc định
         Add();
     });
@@ -61,7 +62,7 @@ $(document).ready(function () {
                 password: password,
                 email: email
             },
-            success: function (result) {
+            success: function(result) {
                 console.log('befor pare', result)
 
                 if (result.statusCode === 200) {
@@ -73,7 +74,7 @@ $(document).ready(function () {
                     window.location.href = "login.html"
                 }
             },
-            error: function (errormessage) {
+            error: function(errormessage) {
 
                 try {
                     const errorData = JSON.parse(errormessage.responseText);
@@ -135,7 +136,7 @@ function getUserInfo() {
         data: {
             email: email
         },
-        success: function (result) {
+        success: function(result) {
             console.log(result.data)
             if (result.statusCode === 200) {
                 var user = result.data;
@@ -147,7 +148,7 @@ function getUserInfo() {
                 alert("User not found");
             }
         },
-        error: function (xhr, status, error) {
+        error: function(xhr, status, error) {
             // Xử lý khi có lỗi trong quá trình gọi API
             console.log("Error:", error);
         }
