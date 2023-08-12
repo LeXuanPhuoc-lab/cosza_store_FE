@@ -100,8 +100,7 @@ $(document).ready(function () {
 
     function relatedItems(category, currItemId) {
       $.ajax({
-        url:
-          "http://localhost:8080/product/relateItem/?categoryId=" +
+        url: "http://localhost:8080/product/relateItem/?categoryId=" +
           category +
           "&currentProductId=" +
           currItemId,
@@ -261,11 +260,11 @@ $(document).ready(function () {
     itemQuantity["quantities"].splice(index, 1);
 
     document.querySelector(".cart-total-price").innerHTML = "";
-    
+
     localStorage.setItem("cart-items", JSON.stringify(cartItems));
     localStorage.setItem("cart-items-quantity", JSON.stringify(itemQuantity));
   }
-  
+
   function countTotalPrice(cartItems, itemQuantity) {
     var totalPrice = 0;
     for (let i = 0; i < cartItems["cartItems"].length; i++) {
@@ -342,9 +341,9 @@ $(document).ready(function () {
     }
 
     countTotalPrice(cartItems, itemQuantity);
-
+    console.log(cartItems)
     localStorage.setItem("cart-items", JSON.stringify(cartItems));
     localStorage.setItem("cart-items-quantity", JSON.stringify(itemQuantity));
-    
+
   });
 });
