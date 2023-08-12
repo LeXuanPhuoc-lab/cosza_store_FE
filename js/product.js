@@ -2,7 +2,7 @@ $(document).ready(function () {
   let div;
   let img;
   let span;
-
+  var token = localStorage.getItem("token");
   // Load Categories
   $.ajax({
     url: "http://localhost:8080/category",

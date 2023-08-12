@@ -3,6 +3,11 @@ $(document).ready(function () {
   let img;
   let span;
 
+  // Load user id
+  $.ajax({
+    url: "http://localhost:8080"
+  });
+
   // Load Categories
   $.ajax({
     url: "http://localhost:8080/category",

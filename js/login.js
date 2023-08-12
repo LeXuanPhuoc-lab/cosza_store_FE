@@ -20,11 +20,12 @@ $(document).ready(function() {
             })
             // khi goi API thi ket qua se tra o day
             .done(function(response) {
-                var token = response.data;
-                if (token != null && token != "") {
+                var respObj = response.data;
+                if (respObj != null && respObj != "") {
                     // luu token vao bo nho cua browser
                     // "gioHang": [{id:1, title:"Shirt", price:109,soluong:10}]
-                    localStorage.setItem("token", token);
+                    localStorage.setItem("token", respObj.token);
+                    localStorage.setItem("user_id", respObj.user_id);
                     window.location.href = "index.html";
                 }
             });

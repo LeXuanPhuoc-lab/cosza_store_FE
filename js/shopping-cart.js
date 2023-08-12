@@ -29,13 +29,11 @@ $(document).ready(function() {
         document
             .querySelector(".checkout_order")
             .addEventListener("click", function() {
-                var cartObj = { "cartItems": cartItems["cartItems"], "quantities": itemQuantity["quantities"] }
+                var user_id = localStorage.getItem("user_id");
+                var cartObj = { "user_id": user_id,"cartItems": cartItems["cartItems"], "quantities": itemQuantity["quantities"] }
                 $.ajax({
                     url: "http://localhost:8080/checkout",
                     method: "POST",
-                    headers: {
-                        "Authorization": "Bearer " + localStorage.getItem("token")
-                    },
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
                     data: JSON.stringify(cartObj)
@@ -44,6 +42,7 @@ $(document).ready(function() {
                 localStorage.removeItem("cart-items");
                 localStorage.removeItem("cart-items-quantity");
                 localStorage.removeItem("test");
+                localStorage.removeItem("user-id");
 
                 alert("Order Items Success");
             });
