@@ -33,60 +33,6 @@ $(document).ready(function() {
 
 
 
-
-    // $("#btn-sign-up").click(function() {
-    //     // .val() : Lấy giá trị của thẻ input được chỉ định
-    //     var username = $("#userNew").val()
-    //     var password = $("#passNew").val()
-    //     var repeatPW = $("#passRP").val()
-    //     var email = $("#email").val()
-
-
-    //     // Kiểm tra trùng lặp mật khẩu
-    //     if (password !== repeatPW) {
-    //         $("#password-match-error").css("display", "block");
-    //         return;
-    //     } else {
-    //         $("#password-match-error").css("display", "none");
-    //     }
-
-    //     // Xuất giá trị ra trên tab console trên trình duyệt
-    //     console.log("username : ", username, " password : ", password, "email: ", email);
-
-    //     //ajax : Dùng để call ngầm API mà không cần trình duyệt
-    //     //axios, fetch
-    //     //data : chỉ có khi tham số truyền ngầm
-    //     $.ajax({
-    //             url: "http://localhost:8080/signup",
-    //             method: "POST",
-    //             data: {
-    //                 username: username,
-    //                 password: password,
-    //                 email: email
-    //             },
-    //             dataType: "json",
-
-    //         })
-    //         .done(function(result) {
-
-    //             // Xử lý kết quả thành công
-    //             var responseData = result.data;
-    //             console.log("Response data:", responseData);
-    //             // Tiếp tục xử lý dữ liệu hoặc hiển thị thông báo cho người dùng
-
-    //         }).fail(function(jqXHR, textStatus, errorThrown) {
-    //             // Xử lý lỗi
-    //             if (jqXHR.status === 500) {
-    //                 var errorResponse = JSON.parse(jqXHR.responseText);
-    //                 var errorMessage = errorResponse.data;
-    //                 console.log("Error:", errorMessage);
-    //                 // Hiển thị thông báo lỗi cho người dùng hoặc thực hiện các hành động khác
-    //             }
-    //         });
-    // })
-
-
-
     $("#btn-sign-up").click(function(event) {
         event.preventDefault(); // Ngăn chặn hành vi mặc định
         Add();
@@ -117,6 +63,10 @@ $(document).ready(function() {
             success: function(result) {
                 console.log('befor pare', result)
 
+                if (result.statusCode === 200) {
+                    alert('dang ky thanh cong')
+                    window.location.href = "login.html"
+                }
             },
             error: function(errormessage) {
 
@@ -140,7 +90,7 @@ $(document).ready(function() {
                         $("#email-new-error").addClass("hidden");
 
 
-                    } else if (errorMessage.includes("email")) {
+                    } else if (errorMessage.toLowerCase().includes("email")) {
                         $("#email-new-error").removeClass("hidden");
                         $("#email-new-error").text(errorMessage);
                         $("#password-new-error").addClass("hidden");
